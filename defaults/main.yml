@@ -1,6 +1,6 @@
 ---
-nginx_site_name: default
-server_name: localhost
-static_root: /var/www/static
-django_host: 127.0.0.1
-django_port: 8000
+nginx_site_template_file: "~/inventory/templates/nginx.conf.j2"
+
+nginx_site_available_dir: "/etc/nginx/sites-available/default"
+
+nginx_site_enabled_dir: "/etc/nginx/sites-enabled/default"

@@ -1,41 +1,23 @@
 ---
-- name: Install Nginx
+- name: Install nginx
   apt:
     name: nginx
     state: present
-    update_cache: yes
 
-- name: Copy Nginx configuration file
+- name: Copy nginx site configuration
   template:
-    src: nginx.conf.j2
-    dest: /etc/nginx/nginx.conf
-    mode: '0644'
-    owner: root
-    group: root
-  notify:
-    - Restart Nginx
+    src: "{{ nginx_site_template_file }}"
+    dest: "{{ nginx_site_available_dir }}"
+  notify: Restart nginx
 
-- name: Copy site configuration
-  template:
-    src: site.conf.j2
-    dest: /etc/nginx/sites-available/{{ nginx_site_name }}
-    mode: '0644'
-    owner: root
-    group: root
-  notify:
-    - Restart Nginx
-
-- name: Enable site
+- name: Enable nginx site
   file:
-    src: /etc/nginx/sites-available/{{ nginx_site_name }}
-    dest: /etc/nginx/sites-enabled/{{ nginx_site_name }}
+    src: "{{ nginx_site_available_dir }}"
+    dest: "{{ nginx_site_enabled_dir }}"
     state: link
-  notify:
-    - Restart Nginx
 
-- name: Remove default site
-  file:
-    path: /etc/nginx/sites-enabled/default
-    state: absent
-  notify:
-    - Restart Nginx
+- name: Ensure nginx is running
+  service:
+    name: nginx
+    state: started
+    enabled: true
