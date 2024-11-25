@@ -8,7 +8,12 @@
   template:
     src: "{{ nginx_site_template_file }}"
     dest: "{{ nginx_site_available_dir }}"
-  notify: Restart nginx
+
+- name: Validate nginx configuration
+  command: nginx -t
+  register: nginx_validation
+  failed_when: nginx_validation.rc != 0
+  changed_when: false
 
 - name: Enable nginx site
   file:
@@ -21,3 +26,4 @@
     name: nginx
     state: started
     enabled: true
+  notify: Reload nginx
