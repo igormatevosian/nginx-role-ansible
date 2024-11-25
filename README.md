@@ -1,38 +1,45 @@
-Role Name
-=========
+# Nginx Role
 
-A brief description of the role goes here.
+An Ansible role for installing and configuring Nginx, including enabling sites and validating configurations.
 
-Requirements
-------------
+## Requirements
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+- The role requires a Debian-based system with `apt` as the package manager.
+- Ensure Ansible is installed and properly configured on your control node.
 
-Role Variables
---------------
+## Role Variables
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The following variables can be configured to customize the role:
 
-Dependencies
-------------
+- `nginx_site_template_file`: Path to the Nginx site configuration template file.
+  - Default: `templates/site.conf.j2`
+- `nginx_site_available_dir`: Directory where the Nginx site configuration will be copied.
+  - Default: `/etc/nginx/sites-available/{{ site_name }}`
+- `nginx_site_enabled_dir`: Directory for symbolic links to enabled sites.
+  - Default: `/etc/nginx/sites-enabled/{{ site_name }}`
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+## Dependencies
 
-Example Playbook
-----------------
+This role has no external dependencies.
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
+## Example Playbook
 
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+Below is an example of how to use the role in your playbook:
 
-License
--------
+```yaml
+- name: Deploy and configure Nginx
+  hosts: web
+  become: true
+  vars:
+    nginx_site_template_file: "nginx.conf.j2"
+    nginx_site_available_dir: "/etc/nginx/sites-available/my_site"
+    nginx_site_enabled_dir: "/etc/nginx/sites-enabled/my_site"
+  roles:
+    - nginx
+```
 
-BSD
+## Handlers
 
-Author Information
-------------------
+This role includes the following handler:
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+- Reload Nginx: Reloads the Nginx service after configuration changes.
